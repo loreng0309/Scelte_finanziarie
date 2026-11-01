@@ -1,9 +1,27 @@
 // Registro degli strumenti dell'hub.
 // Per aggiungerne uno: carica il file HTML in /tools/ e aggiungi un oggetto nell'array "tools".
 // Per una nuova categoria: aggiungila in "categories" e usa il suo id nello strumento.
+// Campi opzionali per strumento: featured (in evidenza in home), simulation (usa simulazione Monte Carlo).
 window.HUB = {
   title: "Hub dati",
   subtitle: "calcolatori e dashboard",
+
+  // Chi sei e dove trovarti (mostrato nella pagina "About the project").
+  // Aggiungi il tuo link LinkedIn tra le virgolette: il pulsante compare da solo.
+  author: {
+    name: "Lorenzo",
+    github: "https://github.com/loreng0309",
+    linkedin: ""
+  },
+  repo: "https://github.com/loreng0309/analisivita",
+
+  // Aggiornamento dei dati fiscali e di mercato negli strumenti.
+  dataAsOf: { en: "Oct 2026", it: "ott. 2026" },
+
+  // Statistiche anonime e gratuite (GoatCounter, senza cookie).
+  // 1) Registrati su goatcounter.com  2) scrivi qui il codice scelto, es. "loreng0309"
+  // Lasciato vuoto = nessun tracking e nessuna richiesta di rete.
+  analytics: { goatcounter: "" },
 
   categories: [
     { id: "immobiliare", name: "Immobiliare e finanza personale" },
@@ -26,7 +44,9 @@ window.HUB = {
       category: "immobiliare",
       description: "Dopo quanti anni conviene comprare con il mutuo invece di affittare e investire la differenza, con costi, imposte e simulazione di mercato.",
       tags: ["casa", "mutuo", "affitto", "ETF", "prima casa"],
-      file: "casa-comprare-o-affittare.html"
+      file: "casa-comprare-o-affittare.html",
+      featured: true,
+      simulation: true
     },
     {
       id: "quadrante-liberta",
@@ -34,7 +54,9 @@ window.HUB = {
       category: "pianificazione",
       description: "Quando puoi smettere di lavorare, in euro: Italia (Milano), Svizzera (Ginevra, Losanna) o Italia poi Svizzera, con pensioni, figli e simulazioni di mercato.",
       tags: ["libertà finanziaria", "pensione", "Italia", "Svizzera"],
-      file: "quadrante-liberta.html"
+      file: "quadrante-liberta.html",
+      featured: true,
+      simulation: true
     },
     {
       id: "capitale-umano-portafoglio",
@@ -50,7 +72,9 @@ window.HUB = {
       category: "pianificazione",
       description: "Prova un piano di investimento: dividi tra azioni, obbligazioni e liquidità, confronta portafogli e vedi con che probabilità raggiungi il tuo obiettivo.",
       tags: ["investimenti", "portafoglio", "ETF", "simulazione", "costi", "tasse"],
-      file: "laboratorio-investimenti.html"
+      file: "laboratorio-investimenti.html",
+      featured: true,
+      simulation: true
     },
     {
       id: "piano-accumulo-mensile",
@@ -58,7 +82,8 @@ window.HUB = {
       category: "pianificazione",
       description: "Simula mese per mese come crescono liquidità, PAC e fondo obiettivo, e prova cosa cambia versando di più, prima o più a lungo.",
       tags: ["PAC", "accumulo", "cuscinetto", "ETF", "simulazione", "rendimento composto"],
-      file: "piano-investimenti.html"
+      file: "piano-investimenti.html",
+      simulation: true
     },
     {
       id: "auto-costo-reale",
@@ -66,7 +91,8 @@ window.HUB = {
       category: "mobilita",
       description: "Confronta contanti, finanziamento, leasing e noleggio di un'auto, con svalutazione, costi di possesso, sconto da finanziamento e costo del denaro.",
       tags: ["auto", "finanziamento", "leasing", "noleggio", "svalutazione", "costo totale"],
-      file: "auto-costo-reale.html"
+      file: "auto-costo-reale.html",
+      simulation: true
     }
   ]
 };
