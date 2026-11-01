@@ -3,7 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Hub dati</title>
+<title>Hub dati · Strumenti per decidere sui soldi</title>
+<meta name="description" content="Sette calcolatori per le grandi scelte sui soldi (comprare o affittare, mutuo, auto, investimenti, libertà finanziaria) con ipotesi visibili, fonti datate e scenari Monte Carlo.">
+<meta name="theme-color" content="#0B8A84">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hub dati: strumenti per decidere sui soldi">
+<meta property="og:description" content="Le grandi decisioni sui soldi, provate sui tuoi numeri. Ipotesi, fonti e limiti sempre visibili.">
+<meta property="og:url" content="https://loreng0309.github.io/analisivita/">
+<meta property="og:image" content="https://loreng0309.github.io/analisivita/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230B8A84'/%3E%3Ctext x='16' y='22' font-family='Arial' font-size='15' font-weight='700' text-anchor='middle' fill='white'%3EHD%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -111,6 +120,29 @@ svg{display:block;flex:none}
 .tool-bar .btn{padding:6px 11px;font-size:.84rem}
 iframe{flex:1;width:100%;border:0;background:var(--bg)}
 
+/* hero */
+.kicker{font-family:var(--mono);font-size:.8rem;color:var(--accent);letter-spacing:.05em;text-transform:uppercase;margin:0 0 14px}
+.hero .lead{max-width:64ch}
+.cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.cta .btn{padding:11px 18px;font-size:.96rem}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:30px;max-width:640px}
+.stat{padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+.stat b{display:block;font-size:1.9rem;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.stat span{font-family:var(--mono);font-size:.76rem;color:var(--muted)}
+.hero .note{margin:16px 0 0;color:var(--muted);font-size:.9rem}
+
+/* about / case study */
+.about{max-width:780px;padding:44px 40px 90px}
+.about h1{font-size:clamp(1.8rem,4vw,2.4rem);font-weight:700;letter-spacing:-.02em;line-height:1.15;margin:0 0 12px}
+.about .lead{margin:0;color:var(--muted);font-size:1.08rem;line-height:1.6}
+.about h2{margin:36px 0 10px;font-size:1.15rem;font-weight:600;display:flex;align-items:center;gap:10px}
+.about h2::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--accent);flex:none}
+.about p,.about li{line-height:1.7;font-size:1.02rem}
+.about ol{margin:10px 0 0;padding-left:22px}
+.about li{margin:8px 0}
+.about li b{font-weight:600}
+.about .cta{margin-top:34px}
+
 .scrim{display:none}
 
 @media (max-width:860px){
@@ -120,6 +152,7 @@ iframe{flex:1;width:100%;border:0;background:var(--bg)}
   body.nav-open .scrim{display:block;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:15}
   .menu-btn{display:inline-flex}
   .home{padding:28px 18px 56px}
+  .about{padding:28px 18px 64px}
   .top{padding:0 12px}
   .tool-bar p{display:none}
   .btn .lbl{display:none}
@@ -128,6 +161,7 @@ iframe{flex:1;width:100%;border:0;background:var(--bg)}
 </style>
 </head>
 <body>
+<noscript><p style="padding:24px;font-family:sans-serif">Questo sito richiede JavaScript. Descrizione e codice: <a href="https://github.com/loreng0309/analisivita">github.com/loreng0309/analisivita</a></p></noscript>
 <div class="shell">
 
   <aside class="side" id="side" aria-label="Navigazione">
@@ -153,10 +187,13 @@ iframe{flex:1;width:100%;border:0;background:var(--bg)}
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></svg>
         <span class="lbl">Hub</span>
       </a>
+      <button class="btn" id="lang-btn" aria-label="Language / Lingua"></button>
       <button class="btn" id="theme-btn" aria-label="Cambia tema"></button>
     </header>
 
     <section class="view" id="home-view"></section>
+
+    <section class="view" id="about-view" hidden></section>
 
     <section class="view" id="tool-view" hidden>
       <div class="tool-bar">
@@ -182,8 +219,121 @@ iframe{flex:1;width:100%;border:0;background:var(--bg)}
   const catName = id => (cats.find(c => c.id === id) || {name:"Altro"}).name;
   const plural = (n, one, many) => n + " " + (n === 1 ? one : many);
 
+  /* ---------- testi (EN/IT): solo hero e pagina "About"; gli strumenti restano in italiano ---------- */
+  const I18N = {
+    en: {
+      home:"Home", aboutNav:"About the project", tools:"tools", search:"Search a tool", full:"Full page", none:"No results for",
+      docTitle:"Personal finance decision tools",
+      kicker:"Personal finance · decision tools",
+      title:"Big money decisions, tested on your own numbers.",
+      lead:"Calculators for the choices that shape your finances: buy or rent, down payment or a 100% mortgage, the real cost of a car, how to invest, when you could stop working. Every result shows its assumptions, sources and limits.",
+      tryIt:"Try a tool", caseBtn:"Read the case study", codeBtn:"View the code",
+      stTools:"tools", stCats:"categories", stSim:"with Monte Carlo scenarios",
+      note:"The tools themselves are in Italian and use Italian tax rules (data as of {d}).",
+      start:"Start here", all:"All tools", unit:["tool","tools","category","categories"],
+      by:"Built by", linkedin:"LinkedIn", github:"GitHub",
+      privOn:"No cookies. Only anonymous, aggregate page statistics are collected; the numbers you enter never leave your browser.",
+      privOff:"Nothing you enter is sent to a server; settings stay in your browser.",
+      ab:{
+        h1:"Hub dati: a case study",
+        sub:"A personal-finance toolkit, designed and built as a product.",
+        s:[
+          {h:"The problem", p:["Big money decisions (buy or rent, how much down payment, how to finance a car, how much to invest) are usually answered with rules of thumb or a bank's sales pitch. Online calculators return a single number built on assumptions you cannot see or change."]},
+          {h:"The solution", p:["Browser-based tools for the Italian context. You enter your own numbers; each tool shows the break-even point, the year-by-year result and, where it matters, a range of simulated market scenarios instead of one forecast."]},
+          {h:"Product principles", ol:[
+            "Decisions, not calculators.|Each tool is framed as a question (\"Buy or rent?\") and answers with a break-even point or a verdict.",
+            "Assumptions are visible and editable.|Defaults come with their source, date and status (verified or estimate) in most tools.",
+            "Limits are stated.|Most tools list what the model does not cover, so nobody mistakes a simplification for advice.",
+            "Uncertainty as ranges.|{n} of the tools use seeded Monte Carlo simulation: a result is a range of outcomes, and it is reproducible.",
+            "Privacy by design.|{priv}",
+            "Cheap to extend.|A new tool is one HTML file plus one entry in tools.js."
+          ]},
+          {h:"How it is built", p:["A static site on GitHub Pages: vanilla HTML, CSS and JavaScript, no framework, no backend, no build step. A small registry (tools.js) drives navigation, search and cards; each tool is a self-contained page loaded inside the hub. Light and dark themes, a mobile layout and ARIA labels are built in."]},
+          {h:"Status and next steps", p:["A working prototype built by one person. Next:"], ol:[
+            "Add privacy-friendly analytics to see which tools people actually use.",
+            "Run short usability tests with real users and write down what they find hard.",
+            "Add automated tests for the financial models.",
+            "Make results shareable with a link."
+          ]},
+          {h:"Limits", p:["The tools compare scenarios; they are not financial, tax or legal advice. Tax rules and market data are as of {d}."]}
+        ]
+      }
+    },
+    it: {
+      home:"Home", aboutNav:"Il progetto", tools:"strumenti", search:"Cerca uno strumento", full:"Pagina intera", none:"Nessun risultato per",
+      docTitle:"Strumenti per decidere sui soldi",
+      kicker:"Finanza personale · strumenti per decidere",
+      title:"Le grandi decisioni sui soldi, provate sui tuoi numeri.",
+      lead:"Calcolatori per le scelte che pesano sulle tue finanze: comprare o affittare, anticipo o mutuo al 100%, il costo vero di un'auto, come investire, quando potresti smettere di lavorare. Ogni risultato mostra ipotesi, fonti e limiti.",
+      tryIt:"Prova uno strumento", caseBtn:"Perché esiste e come funziona", codeBtn:"Vedi il codice",
+      stTools:"strumenti", stCats:"categorie", stSim:"con scenari Monte Carlo",
+      note:"Regole fiscali italiane e dati di mercato aggiornati a {d}. Strumenti per confrontare scenari, non consulenza.",
+      start:"Da dove iniziare", all:"Tutti gli strumenti", unit:["strumento","strumenti","categoria","categorie"],
+      by:"Realizzato da", linkedin:"LinkedIn", github:"GitHub",
+      privOn:"Nessun cookie. Si raccolgono solo statistiche anonime e aggregate sulle pagine; i numeri che inserisci non lasciano il tuo browser.",
+      privOff:"Nulla di ciò che inserisci viene inviato a un server; le impostazioni restano nel tuo browser.",
+      ab:{
+        h1:"Hub dati: perché esiste e come funziona",
+        sub:"Un set di strumenti di finanza personale, progettato e costruito come un prodotto.",
+        s:[
+          {h:"Il problema", p:["Le grandi decisioni sui soldi (comprare o affittare, quanto anticipo, come finanziare un'auto, quanto investire) di solito ricevono regole a spanne o il pitch di una banca. I calcolatori online restituiscono un solo numero, costruito su ipotesi che non vedi e non puoi cambiare."]},
+          {h:"La soluzione", p:["Strumenti nel browser per il contesto italiano. Inserisci i tuoi numeri; ogni strumento mostra il punto di pareggio, il risultato anno per anno e, dove serve, un intervallo di scenari di mercato simulati invece di una sola previsione."]},
+          {h:"Principi di prodotto", ol:[
+            "Decisioni, non calcolatori.|Ogni strumento è una domanda (\"Comprare o affittare?\") e risponde con un punto di pareggio o un verdetto.",
+            "Ipotesi visibili e modificabili.|Nella maggior parte degli strumenti i valori di partenza hanno fonte, data e stato (verificato o stima).",
+            "I limiti sono dichiarati.|La maggior parte degli strumenti elenca ciò che il modello non copre, così una semplificazione non passa per consulenza.",
+            "L'incertezza come intervallo.|{n} strumenti usano simulazioni Monte Carlo a seme fisso: il risultato è un intervallo di esiti ed è riproducibile.",
+            "Privacy fin dall'inizio.|{priv}",
+            "Facile da estendere.|Un nuovo strumento è un file HTML più una riga in tools.js."
+          ]},
+          {h:"Come è fatto", p:["Sito statico su GitHub Pages: HTML, CSS e JavaScript puro, senza framework, backend o fase di build. Un piccolo registro (tools.js) governa navigazione, ricerca e schede; ogni strumento è una pagina autonoma caricata nell'hub. Tema chiaro e scuro, layout mobile ed etichette ARIA sono inclusi."]},
+          {h:"Stato e prossimi passi", p:["Un prototipo funzionante realizzato da una persona. Prossimi passi:"], ol:[
+            "Aggiungere statistiche rispettose della privacy per vedere quali strumenti si usano davvero.",
+            "Fare brevi test d'uso con persone reali e annotare dove trovano difficoltà.",
+            "Aggiungere test automatici per i modelli finanziari.",
+            "Rendere i risultati condivisibili con un link."
+          ]},
+          {h:"Limiti", p:["Gli strumenti confrontano scenari; non sono consulenza finanziaria, fiscale o legale. Regole fiscali e dati di mercato aggiornati a {d}."]}
+        ]
+      }
+    }
+  };
+  let lang = "it";
+  try { const l = localStorage.getItem("hub-lang"); if (l === "it" || l === "en") lang = l; } catch(e){}
+  const L = () => I18N[lang];
+  const GC = HUB.analytics && HUB.analytics.goatcounter;
+  const fill = s => s
+    .replace("{n}", tools.filter(t => t.simulation).length)
+    .replace("{d}", (HUB.dataAsOf || {})[lang] || "")
+    .replace("{priv}", GC ? L().privOn : L().privOff);
+
+  /* ---------- statistiche anonime (opzionali: attive solo se HUB.analytics.goatcounter è compilato) ---------- */
+  let pendingView = null, lastView = "";
+  function track(path, title, isEvent){
+    if (!GC) return;
+    if (!isEvent) { if (path === lastView) return; lastView = path; }
+    try {
+      if (window.goatcounter && window.goatcounter.count) window.goatcounter.count({path: path, title: title, event: !!isEvent});
+      else if (!isEvent) pendingView = {path: path, title: title};
+    } catch(e){}
+  }
+  if (GC) {
+    const s = document.createElement("script");
+    s.async = true;
+    s.dataset.goatcounter = "https://" + GC + ".goatcounter.com/count";
+    s.dataset.goatcounterSettings = '{"no_onload":true}';
+    s.src = "//gc.zgo.at/count.js";
+    s.onload = () => { if (pendingView) { const v = pendingView; pendingView = null; lastView = ""; track(v.path, v.title); } };
+    document.head.appendChild(s);
+    try {
+      if (localStorage.getItem("hub-seen")) window.addEventListener("load", () => setTimeout(() => track("evt/ritorno", "Visitatore di ritorno", true), 800));
+      else localStorage.setItem("hub-seen", "1");
+    } catch(e){}
+  }
+
   const ICO = {
     tool:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><rect x="7.5" y="6.5" width="9" height="3.5" rx=".6"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 17.5h.01M12 17.5h.01M16 17.5h.01"/></svg>',
+    info:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>',
     home:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4m0 0h12l-2 4 2 4H5"/></svg>',
     chev:'<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>',
     moon:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg>',
@@ -207,7 +357,18 @@ iframe{flex:1;width:100%;border:0;background:var(--bg)}
     try { localStorage.setItem("hub-theme", next); } catch(e){}
     paintThemeBtn(); syncFrame();
   });
-  $("frame").addEventListener("load", syncFrame);
+  $("frame").addEventListener("load", () => {
+    syncFrame();
+    // evento "ha usato lo strumento": una sola volta per apertura, solo se le statistiche sono attive
+    if (!GC) return;
+    try {
+      const id = $("frame").dataset.id;
+      $("frame").contentDocument.addEventListener("input", function f(e){
+        e.currentTarget.removeEventListener("input", f, true);
+        track("evt/uso/" + id, "Ha modificato un input: " + id, true);
+      }, true);
+    } catch(e){}
+  });
 
   /* ---------- ricerca e stato ---------- */
   let query = "";
@@ -223,14 +384,15 @@ iframe{flex:1;width:100%;border:0;background:var(--bg)}
     return ids.map(id => ({id, name: catName(id), tools: tools.filter(t => t.category === id && match(t))}))
               .filter(g => g.tools.length);
   };
-  let activeId = null;
+  let activeId = null, isAbout = false;
 
   /* ---------- sidebar ---------- */
   function renderNav(){
     const gs = groups();
-    let h = '<a class="nav-home' + (activeId ? '' : ' active') + '" href="#/">' + ICO.home + '<span>Home</span></a>';
-    h += '<div class="nav-label">strumenti · ' + tools.length + '</div>';
-    if (!gs.length) h += '<div class="no-match">Nessun risultato per “' + esc(query) + '”.</div>';
+    let h = '<a class="nav-home' + (!activeId && !isAbout ? ' active' : '') + '" href="#/">' + ICO.home + '<span>' + esc(L().home) + '</span></a>';
+    h += '<a class="nav-home' + (isAbout ? ' active' : '') + '" href="#/about">' + ICO.info + '<span>' + esc(L().aboutNav) + '</span></a>';
+    h += '<div class="nav-label">' + esc(L().tools) + ' · ' + tools.length + '</div>';
+    if (!gs.length) h += '<div class="no-match">' + esc(L().none) + ' “' + esc(query) + '”.</div>';
     gs.forEach(g => {
       const isOpen = query ? true : open.has(g.id);
       h += '<div class="cat"><button class="cat-btn" data-cat="' + esc(g.id) + '" aria-expanded="' + isOpen + '">' +
@@ -240,7 +402,9 @@ iframe{flex:1;width:100%;border:0;background:var(--bg)}
            '</div></div>';
     });
     $("nav").innerHTML = h;
-    $("side-foot").textContent = plural(tools.length, "strumento", "strumenti") + " · " + plural(new Set(tools.map(t => t.category)).size, "categoria", "categorie");
+    const u = L().unit, nc = new Set(tools.map(t => t.category)).size;
+    $("side-foot").innerHTML = esc(plural(tools.length, u[0], u[1]) + " · " + plural(nc, u[2], u[3])) +
+      (HUB.repo ? ' · <a href="' + esc(HUB.repo) + '" target="_blank" rel="noopener">GitHub</a>' : '');
   }
   $("nav").addEventListener("click", e => {
     const b = e.target.closest(".cat-btn");
@@ -250,13 +414,48 @@ iframe{flex:1;width:100%;border:0;background:var(--bg)}
       renderNav();
     }
   });
-  $("q").addEventListener("input", e => { query = e.target.value.trim(); renderNav(); if (!activeId) renderHome(); });
+  $("q").addEventListener("input", e => { query = e.target.value.trim(); renderNav(); if (!activeId) { if (isAbout) location.hash = "#/"; else renderHome(); } });
 
   /* ---------- home ---------- */
+  function cardHtml(t){
+    return '<a class="card" href="#/t/' + encodeURIComponent(t.id) + '"><span class="ico">' + ICO.tool + '</span><span><h3>' + esc(t.name) + '</h3><p>' + esc(t.description || "") + '</p>' +
+      ((t.tags && t.tags.length) ? '<span class="tags">' + t.tags.map(x => '<span class="tag">' + esc(x) + '</span>').join("") + '</span>' : '') +
+      '</span></a>';
+  }
+  function heroHtml(){
+    const l = L(), feat = tools.filter(t => t.featured), sim = tools.filter(t => t.simulation).length;
+    const stat = (n, lab) => '<div class="stat"><b>' + n + '</b><span>' + esc(lab) + '</span></div>';
+    let h = '<div class="hero"><p class="kicker">' + esc(l.kicker) + '</p><h1>' + esc(l.title) + '</h1><p class="lead">' + esc(l.lead) + '</p>' +
+      '<div class="cta"><a class="btn primary" href="#' + (feat[0] ? '/t/' + encodeURIComponent(feat[0].id) : '/') + '">' + esc(l.tryIt) + '</a>' +
+      '<a class="btn" href="#/about">' + esc(l.caseBtn) + '</a>' +
+      (HUB.repo ? '<a class="btn" href="' + esc(HUB.repo) + '" target="_blank" rel="noopener">' + esc(l.codeBtn) + '</a>' : '') + '</div>' +
+      '<div class="stats">' + stat(tools.length, l.stTools) + stat(new Set(tools.map(t => t.category)).size, l.stCats) + (sim ? stat(sim, l.stSim) : '') + '</div>' +
+      '<p class="note">' + esc(fill(l.note)) + '</p></div>';
+    if (feat.length) h += '<div class="sec"><i></i>' + esc(l.start) + '</div><div class="cards">' + feat.map(cardHtml).join("") + '</div>';
+    return h;
+  }
+  function renderAbout(){
+    const l = L(), a = l.ab, au = HUB.author || {};
+    let h = '<article class="about"><p class="kicker">' + esc(l.kicker) + '</p><h1>' + esc(a.h1) + '</h1><p class="lead">' + esc(a.sub) + '</p>';
+    a.s.forEach(s => {
+      h += '<h2>' + esc(s.h) + '</h2>';
+      (s.p || []).forEach(p => { h += '<p>' + esc(fill(p)) + '</p>'; });
+      if (s.ol) h += '<ol>' + s.ol.map(x => {
+        const parts = fill(x).split("|");
+        return '<li>' + (parts.length > 1 ? '<b>' + esc(parts[0]) + '</b> ' + esc(parts[1]) : esc(parts[0])) + '</li>';
+      }).join("") + '</ol>';
+    });
+    h += '<h2>' + esc(l.by) + ' ' + esc(au.name || "") + '</h2><div class="cta" style="margin-top:12px">' +
+      (au.linkedin ? '<a class="btn primary" href="' + esc(au.linkedin) + '" target="_blank" rel="noopener">' + esc(l.linkedin) + '</a>' : '') +
+      (au.github ? '<a class="btn" href="' + esc(au.github) + '" target="_blank" rel="noopener">' + esc(l.github) + '</a>' : '') +
+      (HUB.repo ? '<a class="btn" href="' + esc(HUB.repo) + '" target="_blank" rel="noopener">' + esc(l.codeBtn) + '</a>' : '') +
+      '<a class="btn" href="#/">' + esc(l.tryIt) + '</a></div></article>';
+    $("about-view").innerHTML = h;
+  }
   function renderHome(){
     const gs = groups();
-    let h = '<div class="home"><h1>' + esc(HUB.title) + '</h1>' +
-      '<p class="lead">Calcolatori e dashboard per le analisi sui dati. Scegli uno strumento qui sotto o dalla barra laterale.</p>';
+    let h = '<div class="home">' + (query ? '<h1>' + esc(HUB.title) + '</h1>' : heroHtml());
+    if (!query && tools.length) h += '<div class="sec"><i></i>' + esc(L().all) + ' <small>' + tools.length + '</small></div>';
     if (!tools.length) {
       h += '<div class="empty"><b>Non ci sono ancora strumenti.</b><br>Carica un file HTML nella cartella <code>tools/</code> e aggiungi una riga in <code>tools.js</code>: comparirà qui.</div>';
     } else if (!gs.length) {
@@ -264,9 +463,7 @@ iframe{flex:1;width:100%;border:0;background:var(--bg)}
     } else {
       gs.forEach(g => {
         h += '<div class="sec"><i></i>' + esc(g.name) + ' <small>' + g.tools.length + '</small></div><div class="cards">' +
-          g.tools.map(t => '<a class="card" href="#/t/' + encodeURIComponent(t.id) + '"><span class="ico">' + ICO.tool + '</span><span><h3>' + esc(t.name) + '</h3><p>' + esc(t.description || "") + '</p>' +
-            ((t.tags && t.tags.length) ? '<span class="tags">' + t.tags.map(x => '<span class="tag">' + esc(x) + '</span>').join("") + '</span>' : '') +
-            '</span></a>').join("") + '</div>';
+          g.tools.map(cardHtml).join("") + '</div>';
       });
     }
     h += '</div>';
@@ -283,9 +480,9 @@ iframe{flex:1;width:100%;border:0;background:var(--bg)}
     const tool = m && tools.find(t => t.id === decodeURIComponent(m[1]));
     document.body.classList.remove("nav-open");
     if (tool) {
-      activeId = tool.id;
+      activeId = tool.id; isAbout = false;
       open.add(tool.category);
-      $("home-view").hidden = true; $("tool-view").hidden = false;
+      $("home-view").hidden = true; $("about-view").hidden = true; $("tool-view").hidden = false;
       crumbs([{t:"hub", href:"#/"}, {t:catName(tool.category)}, {t:tool.name}]);
       $("tool-desc").textContent = tool.description || "";
       const src = "tools/" + tool.file;
@@ -293,16 +490,39 @@ iframe{flex:1;width:100%;border:0;background:var(--bg)}
       const f = $("frame");
       if (f.dataset.id !== tool.id) { f.dataset.id = tool.id; f.src = src; } else { syncFrame(); }
       document.title = tool.name + " · " + HUB.title;
+      track("/t/" + tool.id, tool.name);
+    } else if (location.hash === "#/about") {
+      activeId = null; isAbout = true;
+      $("tool-view").hidden = true; $("home-view").hidden = true; $("about-view").hidden = false;
+      crumbs([{t:"hub", href:"#/"}, {t:L().aboutNav}]);
+      renderAbout();
+      $("about-view").scrollTop = 0;
+      document.title = L().ab.h1 + " · " + HUB.title;
+      track("/about", "About");
     } else {
-      activeId = null;
-      $("tool-view").hidden = true; $("home-view").hidden = false;
+      activeId = null; isAbout = false;
+      $("tool-view").hidden = true; $("about-view").hidden = true; $("home-view").hidden = false;
       crumbs([{t:"hub", href:"#/"}, {t:"home"}]);
       renderHome();
-      document.title = HUB.title;
+      document.title = HUB.title + " · " + L().docTitle;
+      track("/", "Home");
     }
     renderNav();
   }
   window.addEventListener("hashchange", route);
+
+  /* ---------- lingua ---------- */
+  function applyLang(){
+    document.documentElement.lang = lang;
+    $("q").placeholder = L().search; $("q").setAttribute("aria-label", L().search);
+    $("lang-btn").textContent = lang === "en" ? "IT" : "EN";
+    const fl = $("tool-full").querySelector(".lbl"); if (fl) fl.textContent = L().full;
+  }
+  $("lang-btn").addEventListener("click", () => {
+    lang = lang === "en" ? "it" : "en";
+    try { localStorage.setItem("hub-lang", lang); } catch(e){}
+    applyLang(); route();
+  });
 
   /* ---------- menu mobile ---------- */
   $("menu-btn").addEventListener("click", () => document.body.classList.toggle("nav-open"));
@@ -313,8 +533,6 @@ iframe{flex:1;width:100%;border:0;background:var(--bg)}
   $("brand-sub").textContent = HUB.subtitle || "";
   $("logo").textContent = (HUB.title || "H").split(/\s+/).map(w => w[0]).join("").slice(0, 2).toUpperCase();
   paintThemeBtn();
+  applyLang();
   route();
 })();
-</script>
-</body>
-</html>
