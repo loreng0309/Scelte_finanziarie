@@ -1,6 +1,6 @@
 # Hub dati: decision calculators for personal finance
 
-**Live:** https://loreng0309.github.io/analisivita
+**Live:** https://loreng0309.github.io/Scelte_finanziarie
 
 Big money decisions, tested on your own numbers. Seven browser-based tools for the Italian context (buy or rent, mortgage, car, investing, financial independence). Every result shows its assumptions, sources and limits.
 
